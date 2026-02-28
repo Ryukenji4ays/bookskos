@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sepetim - BOOKSKOS</title>
+    <link rel="icon" href="/images/logo.png" type="image/png">
+    
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+    <style>
+        /* --- SAYFA ÖZEL STİLLERİ --- */
+
+        /* Footer'ı aşağı itmek için */
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        main { flex: 1; }
+
+/* Tablo Genel Yapısı */
+.cart-table {
+    width: 100%;
+    border-collapse: collapse; /* Satırları birleştir (Aradaki boşlukları sil) */
+    margin-top: 20px;
+    background-color: white;
+    border-radius: 8px; /* Köşeleri hafif yuvarlat */
+    overflow: hidden; /* Köşelerin düzgün görünmesi için */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* belli belirsiz gölge */
+}
+
+/* Başlıklar */
+.cart-table th {
+    background-color: #f8f9fa; 
+    color: #333;
+    font-weight: 600;
+    padding: 15px;
+    text-align: left;
+    border-bottom: 2px solid #eee; /* Başlığın altını çiz */
+}
+
+/* Satırlar */
+.cart-table td {
+    padding: 15px;
+    vertical-align: middle;
+    border-bottom: 1px solid #eee; /* Her ürün arasına ince çizgi */
+    color: #555;
+}
+
+/* Satır Hover Efekti  */
+.cart-table tbody tr:hover {
+    background-color: #fafafa; 
+}
+
+/* Son satırın altındaki çizgiyi kaldır */
+.cart-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Ürün Adı */
+.cart-table td:first-child {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+/* Ara Toplam Rengi */
+.cart-table td:nth-child(4) {
+    color: #e67e22;
+    font-weight: bold;
+}
+
+/* Miktar Butonları*/
+.qty-group {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.qty-btn {
+    background-color: #eee;
+    border: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #333;
+    transition: 0.2s;
+}
+
+.qty-btn:hover { background-color: #ddd; }
+
+/* Sil Butonu*/
+.remove-btn {
+    background-color: transparent;
+    color: #e74c3c;
+    border: 1px solid #e74c3c;
+    padding: 6px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: 0.2s;
+}
+
+.remove-btn:hover {
+    background-color: #e74c3c;
+    color: white;
+}
+
+/* Toplam Alanı*/
+.total-area {
+    margin-top: 25px;
+    text-align: right; /* Sağa yasla */
+}
+
+.total-area p {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.total-area span#grand-total {
+    font-weight: bold;
+    font-size: 24px;
+    color: #2c3e50;
+}
+
+/* Sipariş Butonu */
+.checkout-btn {
+    background-color: orange;
+    color: white;
+    padding: 12px 30px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.checkout-btn:hover {
+    background-color: darkorange;
+}
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand-title">
+             <a href="index.html">
+        <img src="images/logo.jpeg" alt="BOOKSKOS" style="height: 100px;"> 
+            </a>
+    </div>
+        <div class="navbar">
+            <div class="container nav-flex">
+                <div class="nav-left">
+                    <a href="index.html">
+                        <i class="fas fa-arrow-left"></i> Geri Dön
+                    </a>
+                </div>
+                <div class="nav-right">
+                    <span>Sepetiniz</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <h2 class="page-title">Alışveriş Sepeti</h2>
+
+        <table class="cart-table">
+            <thead>
+                <tr>
+                    <th>Ürün Adı</th>
+                    <th>Fiyat</th>
+                    <th>Adet</th>
+                    <th>Toplam</th>
+                    <th>İşlem</th>
+                </tr>
+            </thead>
+            <tbody id="cart-items">
+                </tbody>
+        </table>
+
+        <div class="total-area">
+            <p>Genel Toplam: <span id="grand-total">0.00</span> TL</p>
+            <br>
+            <button onclick="siparisiTamamla()" class="checkout-btn" style="width: auto; padding: 15px 30px;">
+                Siparişi Tamamla <i class="fas fa-check"></i>
+            </button>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 BOOKSKOS - CHERRY</p>
+    </footer>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', sepetiYukle);
+
+        function sepetiYukle() {
+            var sepet = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+            var tablo = document.getElementById('cart-items');
+            tablo.innerHTML = '';
+            var genelToplam = 0;
+
+            if (sepet.length === 0) {
+                tablo.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:30px;">Sepetiniz şu an boş.</td></tr>';
+                document.getElementById('grand-total').innerText = "0.00";
+                return;
+            }
+
+            sepet.forEach(function(urun, index) {
+                var toplam = urun.price * urun.quantity;
+                genelToplam += toplam;
+
+                var satir = `
+                    <tr>
+                        <td style="font-weight:bold;">${urun.title}</td>
+                        <td>${urun.price} TL</td>
+                        <td>
+                            <div class="qty-group">
+                                <button class="qty-btn" onclick="miktarDegistir(${index}, -1)">-</button>
+                                <span style="font-size:16px; width:20px; text-align:center;">${urun.quantity}</span>
+                                <button class="qty-btn" onclick="miktarDegistir(${index}, 1)">+</button>
+                            </div>
+                        </td>
+                        <td style="color:#e67e22; font-weight:bold;">${toplam.toFixed(2)} TL</td>
+                        <td>
+                            <button class="remove-btn" onclick="urunuSil(${index})">
+                                <i class="fas fa-trash"></i> Sil
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tablo.innerHTML += satir;
+            });
+
+            document.getElementById('grand-total').innerText = genelToplam.toFixed(2);
+        }
+
+        function miktarDegistir(index, degisim) {
+            var sepet = JSON.parse(localStorage.getItem('shoppingCart'));
+            sepet[index].quantity += degisim;
+            if (sepet[index].quantity < 1) sepet[index].quantity = 1;
+            localStorage.setItem('shoppingCart', JSON.stringify(sepet));
+            sepetiYukle();
+        }
+
+        function urunuSil(index) {
+            var sepet = JSON.parse(localStorage.getItem('shoppingCart'));
+            
+            // Silinen ürünün adın bildirim için
+            var silinenUrunAdi = sepet[index].title;
+
+            // Ürünü sepetten sil
+            sepet.splice(index, 1);
+            localStorage.setItem('shoppingCart', JSON.stringify(sepet));
+            
+            // Tabloyu yenile
+            sepetiYukle();
+
+            // Confirm kutusu yerine Toastify bildirimi göster
+            bildirimGoster(silinenUrunAdi + " sepetten çıkarıldı.", "red");
+        }
+
+function siparisiTamamla() {
+    var sepet = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+    var kullanici = JSON.parse(localStorage.getItem('currentUser'));
+
+    // Sepet Boş mu?
+    if (sepet.length === 0) {
+        bildirimGoster("Sepetiniz boş!", "red");
+        return;
+    }
+
+    // Giriş Yapılmış mı?
+    if (!kullanici) {
+        bildirimGoster("Lütfen önce giriş yapın.", "red");
+        setTimeout(() => { window.location.href = 'login.html'; }, 2000);
+        return;
+    }
+
+    // STOK KONTROLÜ
+    // Sepetteki her bir ürünü sırayla kontrol ediyoruz
+    for (var i = 0; i < sepet.length; i++) {
+        var urun = sepet[i];
+
+        // Eğer istenen adet, stoktan fazlaysa HATA VER ve DUR.
+        if (urun.quantity > urun.stock) {
+            bildirimGoster("HATA: " + urun.title + " ürününden en fazla " + urun.stock + " adet alabilirsiniz!", "red");
+            return; // Fonksiyonu burada keser, siparişi göndermez.
+        }
+    }
+
+    // Sorun yoksa siparişi gönder
+    if (confirm("Siparişi onaylıyor musunuz?")) {
+        var siparisVerisi = {
+            user_id: kullanici.user_id || kullanici.id, // Kullanıcı ID'si
+            items: sepet
+        };
+
+        fetch('/api/orders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(siparisVerisi)
+        })
+        .then(res => res.json())
+        .then(data => {
+            bildirimGoster("Siparişiniz alındı!", "green");
+            localStorage.removeItem('shoppingCart'); // Sepeti temizle
+            setTimeout(() => { window.location.href = 'index.html'; }, 2000);
+        })
+        .catch(err => {
+            console.log(err);
+            bildirimGoster("Bir hata oluştu.", "red");
+        });
+    }
+}
+        
+
+        function bildirimGoster(mesaj, renkTipi) {
+            var arkaplanRengi;
+            if(renkTipi === "green") {
+                arkaplanRengi = "linear-gradient(to right, #00b09b, #96c93d)";
+            } else {
+                arkaplanRengi = "linear-gradient(to right, #ff5f6d, #ffc371)";
+            }
+
+            Toastify({
+                text: mesaj,
+                duration: 3000,
+                gravity: "top",
+                position: "right",
+                stopOnFocus: true,
+                style: {
+                    background: arkaplanRengi,
+                    borderRadius: "10px",
+                    boxShadow: "0 3px 6px rgba(0,0,0,0.1)"
+                }
+            }).showToast();
+        }
+    </script>
+</body>
+</html>

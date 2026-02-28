@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giriş Yap - BOOKSKOS</title>
+    <link rel="icon" href="/images/logo.png" type="image/png">
+    
+    <link rel="stylesheet" href="style.css">
+    
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+</head>
+<body>
+
+    <header>
+        <div class="brand-title">
+             <a href="index.html" style="text-decoration: none;">
+            <img src="images/logo.jpeg" alt="BOOKSKOS" style="height: 80px; cursor: pointer;"> 
+            </a>
+        </div>
+        <div class="navbar">
+            <div class="container nav-flex">
+                <div class="nav-left"><a href="index.html">← Anasayfaya Dön</a></div>
+                <div class="nav-right"><span>Giriş Yap</span></div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="login-container">
+            <h2 style="text-align:center; margin-bottom:20px;">Üye Girişi</h2>
+
+            <div class="form-group">
+                <label>E-Posta:</label>
+                <input type="email" id="login-email" placeholder="ornek@mail.com">
+            </div>
+
+            <div class="form-group">
+                <label>Şifre:</label>
+                <input type="password" id="login-password" placeholder="********">
+            </div>
+
+            <button class="login-btn" onclick="girisYap()">Giriş Yap</button>
+            
+            <p style="text-align:center; margin-top:15px; font-size:14px;">
+                Hesabın yok mu? <a href="register.html" style="color:blue;">Hemen Üye Ol</a>
+            </p>
+        </div>
+    </main>
+
+    <footer><p>&copy; 2025 BOOKSKOS - CHERRY</p></footer>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <script>
+        function girisYap() {
+            var mail = document.getElementById('login-email').value;
+            var sifre = document.getElementById('login-password').value;
+
+            // Boş alan kontrolü
+            if (mail === "" || sifre === "") {
+                bildirimGoster("Lütfen e-posta ve şifrenizi girin!", "red");
+                return;
+            }
+
+            var veri = { email: mail, password: sifre };
+
+            fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(veri)
+            })
+            .then(res => res.json())
+            .then(sonuc => {
+                if (sonuc.success) {
+                    // BAŞARILI GİRİŞ
+                    bildirimGoster("Giriş Başarılı! Yönlendiriliyorsunuz...", "green");
+                    
+                    // Giriş bilgisini kaydet
+                    localStorage.setItem('currentUser', JSON.stringify(sonuc.user));
+
+                    // Kullanıcı bildirimi okusun diye 2 saniye bekle, sonra yönlendir
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 2000);
+
+                } else {
+                    // HATALI GİRİŞ
+                    bildirimGoster("Hata: " + (sonuc.message || "Bilgiler yanlış"), "red");
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                bildirimGoster("Sunucu hatası oluştu!", "red");
+            });
+        }
+
+        // KOD TEKRARINI ÖNLEMEK İÇİN YARDIMCI FONKSİYON
+        function bildirimGoster(mesaj, renkTipi) {
+            // Renkleri ayarla
+            var arkaplanRengi;
+            if(renkTipi === "green") {
+                arkaplanRengi = "linear-gradient(to right, #00b09b, #96c93d)"; // Yeşil
+            } else {
+                arkaplanRengi = "linear-gradient(to right, #ff5f6d, #ffc371)"; // Kırmızı/Turuncu
+            }
+
+            Toastify({
+                text: mesaj,
+                duration: 3000, // 3 saniye ekranda kalır
+                gravity: "top", // Üstte görünsün
+                position: "right", // Sağ tarafta
+                stopOnFocus: true, // Mouse üzerine gelince kapanmasın
+                style: {
+                    background: arkaplanRengi,
+                    borderRadius: "10px", // Köşeleri yuvarlat
+                    boxShadow: "0 3px 6px rgba(0,0,0,0.1)" // Hafif gölge
+                }
+            }).showToast();
+        }
+    </script>
+</body>
+</html>

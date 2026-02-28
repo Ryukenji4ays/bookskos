@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOOKSKOS - Kitap Satış</title>
+    <link rel="icon" href="/images/logo.jpeg" type="image/jpeg">
+    
+    <link rel="stylesheet" href="style.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <header>
+        <div class="brand-title" style="text-align: center; padding-top: 20px;">
+            <a href="index.html" style="display: inline-block; position: relative; z-index: 1000;">
+                <img src="images/logo.jpeg" alt="BOOKSKOS" style="cursor: pointer;">
+            </a>
+        </div>
+
+        <div class="navbar">
+            <div class="container nav-flex">
+                <div class="nav-left">
+                    <a href="index.html">Anasayfa</a>
+                </div>
+
+                <div class="nav-center">
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="Kitap ara...">
+                        <button onclick="kitapAra(document.getElementById('searchInput').value)">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="nav-right">
+                    <a href="cart.html" class="cart-link">
+                        <i class="fas fa-shopping-basket"></i> Sepetim <span id="cart-count">(0)</span>
+                    </a>
+                    
+                    <span id="user-menu">
+                        <a href="login.html"><i class="fas fa-user"></i> Giriş Yap</a>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="main-layout">
+            
+            <aside class="sidebar">
+                <div class="sidebar-title">KATEGORİLER</div>
+                <ul class="category-list">
+                    <li onclick="kategoriFiltrele('Hepsi')">Tüm Kitaplar</li>
+                    <li onclick="kategoriFiltrele('Edebiyat')">Edebiyat</li>
+                    <li onclick="kategoriFiltrele('Çocuk')">Çocuk</li>
+                    <li onclick="kategoriFiltrele('Tarih')">Tarih</li>
+                    <li onclick="kategoriFiltrele('Roman')">Roman</li>
+                    <li onclick="kategoriFiltrele('Bilim')">Bilim</li>
+                </ul>
+            </aside>
+
+            <div class="content-area">
+                <h2 id="page-title">Popüler Kitaplar</h2>
+                
+                <div class="product-grid" id="product-list">
+                    <p>Kitaplar yükleniyor...</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div id="custom-popup" class="popup">
+        <div class="popup-content">
+            <i class="fas fa-check-circle"></i>
+            <h3>Sepete Eklendi!</h3>
+            <p>Ürün başarıyla sepetinize eklendi.</p>
+            
+            <div class="popup-buttons">
+                <button onclick="closePopup()" class="continue-btn">Devam Et</button>
+                <a href="cart.html" class="checkout-btn">Sepete Git</a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; BOOKSKOS - CHERRY </p> <br>
+        <p> Kerem Korkut -<a href="https://www.linkedin.com/in/keremkorkut" target="_blank"> 
+            <i class="fa-brands fa-linkedin"></i> 
+        </a></p> <br>
+        <p> Ediz Uzun -<a href="https://www.linkedin.com/in/edizuzun/" target="_blank">
+            <i class="fa-brands fa-linkedin"></i>
+        </a></p> <br>
+        <p> Cengiz Tığlı -<a href="https://www.linkedin.com/in/cengiz-t%C4%B1%C4%9Fl%C4%B1-6a21733a1/" target="_blank">
+            <i class="fa-brands fa-linkedin"></i>
+        </a></p> 
+       
+
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

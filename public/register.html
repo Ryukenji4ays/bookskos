@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Üye Ol - BOOKSKOS</title>
+    <link rel="icon" href="/images/logo.png" type="image/png">
+    
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+</head>
+<body>
+
+    <header>
+        <div class="brand-title">
+            <a href="index.html">BOOKSKOS
+                <img src="images/logo.jpeg" alt="BOOKSKOS">
+            </a>
+        </div>
+        <div class="navbar">
+            <div class="container nav-flex">
+                <div class="nav-left"><a href="index.html">← Anasayfaya Dön</a></div>
+                <div class="nav-right"><span>Üyelik Formu</span></div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="login-container">
+            <h2 style="text-align:center; margin-bottom:20px;">Aramıza Katıl</h2>
+
+            <div class="form-group">
+                <label>Kullanıcı Adı:</label>
+                <input type="text" id="reg-username" placeholder="Kullanıcı adı seçin">
+            </div>
+
+            <div class="form-group">
+                <label>E-Posta:</label>
+                <input type="email" id="reg-email" placeholder="ornek@mail.com">
+            </div>
+
+            <div class="form-group">
+                <label>Şifre:</label>
+                <input type="password" id="reg-password" placeholder="Şifreniz">
+            </div>
+
+            <button class="register-btn" onclick="uyeOl()">Kaydı Tamamla</button>
+            
+            <p style="text-align:center; margin-top:15px; font-size:14px;">
+                Zaten üye misin? <a href="login.html" style="color:blue;">Giriş Yap</a>
+            </p>
+        </div>
+    </main>
+
+    <footer><p>&copy; 2025 BOOKSKOS - CHERRY</p></footer>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <script>
+        function uyeOl() {
+    //kayıt butonuna basınca çalışan 
+            var kadiInput = document.getElementById('reg-username');
+            var mailInput = document.getElementById('reg-email');
+            var sifreInput = document.getElementById('reg-password');
+
+            var kadi = kadiInput.value;
+            var mail = mailInput.value;
+            var sifre = sifreInput.value;
+
+    //Boş mu kontrol et 
+            if (kadi === "" || mail === "" || sifre === "") {
+                bildirimGoster("Lütfen tüm alanları eksiksiz doldurun!", "red");
+                return;
+            }
+
+    // Sunucuya gönderilecek veri paketini (Obje) hazırla
+            var yeniUye = {
+                username: kadi,
+                email: mail,
+                password: sifre
+            };
+
+    //Fetch API ile sunucuya (Backend) istek gönder
+            fetch('/api/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(yeniUye)
+            })
+            .then(function(cevap)
+    // Sunucudan gelen ham cevabı JSON formatına çevir
+             { return cevap.json(); })
+            .then(function(sonuc) {
+                if (sonuc.success) {
+                    // BAŞARILI KAYIT
+                    bildirimGoster("Kayıt Başarılı! Giriş sayfasına yönlendiriliyorsunuz...", "green");
+                    
+                    // Bildirimin okunması için 2 saniye bekle, sonra yönlendir
+                    setTimeout(function() {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                    
+                } else {
+                    // KAYIT HATASI (Örn: Mail zaten kayıtlı)
+                    bildirimGoster("Kayıt Başarısız: " + (sonuc.message || "Bilinmeyen hata"), "red");
+                }
+            })
+            .catch(function(hata) {
+                console.error("Hata:", hata);
+                bildirimGoster("Sunucu ile bağlantı kurulamadı!", "red");
+            });
+        }
+
+        // --- ORTAK BİLDİRİM FONKSİYONU ---
+        function bildirimGoster(mesaj, renkTipi) {
+            var arkaplanRengi;
+            if(renkTipi === "green") {
+                arkaplanRengi = "linear-gradient(to right, #00b09b, #96c93d)";
+            } else {
+                arkaplanRengi = "linear-gradient(to right, #ff5f6d, #ffc371)";
+            }
+
+            Toastify({
+                text: mesaj, //gösterilecek metin
+                duration: 3000, //ekranda kalma süresi 3 sn
+                gravity: "top", //konum
+                position: "right", //konum
+                stopOnFocus: true, //mouse üzerine gelince kapanma
+                style: {
+                    background: arkaplanRengi,
+                    borderRadius: "10px",
+                    boxShadow: "0 3px 6px rgba(0,0,0,0.1)"
+                }
+            }).showToast(); // Bildirimi göster
+        }
+    </script>
+</body>
+</html>
