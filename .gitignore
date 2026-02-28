@@ -1,8 +1,6 @@
-# İşletim sistemi dosyaları
+
 .DS_Store
 
-# Node modülleri (Kesinlikle yüklenmemeli)
 node_modules/
 
-# Gizli çevre değişkenleri (Şifrelerin burada kalacak)
 .env
